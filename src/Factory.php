@@ -19,7 +19,7 @@ final class Factory
     ) {
         $this->serializer = new Serializer(
             normalizers: [
-                new ObjectNormalizer()
+                new ObjectNormalizer(),
             ],
             encoders: [
                 new XmlEncoder(),
@@ -47,7 +47,7 @@ final class Factory
         }
 
         if (is_array($input)) {
-           return $this->serializer->denormalize($input, $this->className);
+            return $this->serializer->denormalize($input, $this->className);
         }
 
         if (is_file($input)) {

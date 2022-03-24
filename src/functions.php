@@ -13,5 +13,4 @@ if (! function_exists('make')) {
     {
         return Factory::make($className);
     }
-
 }
