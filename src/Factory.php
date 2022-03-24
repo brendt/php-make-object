@@ -53,7 +53,7 @@ final class Factory
                 result: fn (string $input) => $this->serializer->deserialize($input, $this->className, 'xml'),
             ))
             ->addMapper(new Mapper(
-                match: fn (Makes|array|string $input) => true,
+                match: fn (Makes|array|string $input) => str_starts_with(trim($input), '{') && str_ends_with(trim($input), '}'),
                 result: fn (string $input) => $this->serializer->deserialize($input, $this->className, 'json'),
             ));
     }
