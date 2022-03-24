@@ -2,21 +2,29 @@
 
 namespace Brendt\Make;
 
+use Closure;
+use Exception;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 /**
- * @template ClassName
+ * @template ClassType
  */
 final class Factory
 {
     private readonly Serializer $serializer;
 
-    public function __construct(
-        private readonly string $className,
-    ) {
+    private readonly string $className;
+
+    /** @var \Brendt\Make\Mapper[] */
+    private array $mappers = [];
+
+    public function __construct(string $className)
+    {
+        $this->className = $className;
+
         $this->serializer = new Serializer(
             normalizers: [
                 new ObjectNormalizer(),
@@ -26,11 +34,34 @@ final class Factory
                 new JsonEncoder(),
             ],
         );
+
+        $this
+            ->addMapper(new Mapper(
+                match: fn (Makes|array|string $input) => $input instanceof Makes,
+                result: fn (Makes $input) => $this->from($input->data()),
+            ))
+            ->addMapper(new Mapper(
+                match: fn (Makes|array|string $input) => is_array($input),
+                result: fn (array $input) => $this->serializer->denormalize($input, $this->className),
+            ))
+            ->addMapper(new Mapper(
+                match: fn (Makes|array|string $input) => is_file($input),
+                result: fn (string $input) => $this->from(file_get_contents($input)),
+            ))
+            ->addMapper(new Mapper(
+                match: fn (Makes|array|string $input) => str_starts_with(trim($input), '<') && str_ends_with(trim($input), '>'),
+                result: fn (string $input) => $this->serializer->deserialize($input, $this->className, 'xml'),
+            ))
+            ->addMapper(new Mapper(
+                match: fn (Makes|array|string $input) => true,
+                result: fn (string $input) => $this->serializer->deserialize($input, $this->className, 'json'),
+            ));
     }
 
     /**
-     * @param class-string<ClassName> $className
-     * @return self<ClassName>
+     * @param class-string<ClassType> $className
+     *
+     * @return self<ClassType>
      */
     public static function make(string $className): self
     {
@@ -38,30 +69,30 @@ final class Factory
     }
 
     /**
-     * @return ClassName
+     * @return ClassType
      */
     public function from(Makes|array|string $input): object
     {
-        if ($input instanceof Makes) {
-            $input = $input->data();
+        $mapper = $this->resolveMapper($input);
+
+        return $mapper($input);
+    }
+
+    public function addMapper(Mapper $mapper): self
+    {
+        $this->mappers[] = $mapper;
+
+        return $this;
+    }
+
+    private function resolveMapper(Makes|array|string $input): Closure
+    {
+        foreach ($this->mappers as $mapper) {
+            if (($mapper->match)($input)) {
+                return $mapper->result;
+            }
         }
 
-        if (is_array($input)) {
-            return $this->serializer->denormalize($input, $this->className);
-        }
-
-        if (is_file($input)) {
-            $input = file_get_contents($input);
-        }
-
-        $format = 'json';
-
-        $input = trim($input);
-
-        if (str_starts_with($input, '<') && str_ends_with($input, '>')) {
-            $format = 'xml';
-        }
-
-        return $this->serializer->deserialize($input, $this->className, $format);
+        throw new Exception("No mapper found for {$input}");
     }
 }
