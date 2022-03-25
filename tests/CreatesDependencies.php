@@ -6,6 +6,7 @@ namespace Brendt\Make\Tests;
 
 use Brendt\Make\Factory;
 use Brendt\Make\Serializer;
+use Brendt\Make\Tests\Support\Data\Post;
 use Symfony\Component\Serializer\Serializer as SymfonySerializer;
 
 trait CreatesDependencies
