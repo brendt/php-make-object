@@ -10,17 +10,14 @@ use Brendt\Make\Mappers\JsonMapper;
 use Brendt\Make\Mappers\MakesMapper;
 use Brendt\Make\Mappers\XmlMapper;
 use Exception;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Serializer as SymfonySerializer;
 
 /**
  * @template ClassType
  */
 final class Factory
 {
-    private readonly Serializer $serializer;
+    private readonly SymfonySerializer $serializer;
 
     private readonly string $className;
 
@@ -31,15 +28,7 @@ final class Factory
     {
         $this->className = $className;
 
-        $this->serializer = new Serializer(
-            normalizers: [
-                new ObjectNormalizer(),
-            ],
-            encoders: [
-                new XmlEncoder(),
-                new JsonEncoder(),
-            ],
-        );
+        $this->serializer = Serializer::make();
 
         $this
             ->addMapper(new MakesMapper($this))

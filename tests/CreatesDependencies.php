@@ -5,24 +5,14 @@ declare(strict_types=1);
 namespace Brendt\Make\Tests;
 
 use Brendt\Make\Factory;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
+use Brendt\Make\Serializer;
+use Symfony\Component\Serializer\Serializer as SymfonySerializer;
 
 trait CreatesDependencies
 {
-    protected function serializer(): Serializer
+    protected function serializer(): SymfonySerializer
     {
-        return new Serializer(
-            normalizers: [
-                new ObjectNormalizer(),
-            ],
-            encoders: [
-                new XmlEncoder(),
-                new JsonEncoder(),
-            ],
-        );
+        return Serializer::make();
     }
 
     protected function factory(): Factory

@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Brendt\Make\Tests;
 
-/**
- * @property-read \Brendt\Make\Tests\Tag[] $tags
- */
 final class Post
 {
+    /** @var \Brendt\Make\Tests\Tag[]  */
+    public array $tags;
+
     public function __construct(
         public readonly string $title,
         public readonly ?Tag $tag = null,
-        public readonly array $tags = [],
+        array $tags = [],
     ) {
+        $this->tags = $tags;
     }
 }
