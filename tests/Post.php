@@ -6,7 +6,7 @@ namespace Brendt\Make\Tests;
 
 final class Post
 {
-    /** @var \Brendt\Make\Tests\Tag[]  */
+    /** @var \Brendt\Make\Tests\Tag[] */
     public array $tags;
 
     public function __construct(
