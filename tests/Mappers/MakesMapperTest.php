@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brendt\Make\Tests\Mappers;
 
-use Brendt\Make\Mappers\FileMapper;
 use Brendt\Make\Mappers\MakesMapper;
 use Brendt\Make\Tests\CreatesDependencies;
 use Brendt\Make\Tests\Post;

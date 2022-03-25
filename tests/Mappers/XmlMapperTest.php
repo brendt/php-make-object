@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brendt\Make\Tests\Mappers;
 
-use Brendt\Make\Mappers\JsonMapper;
 use Brendt\Make\Mappers\XmlMapper;
 use Brendt\Make\Tests\CreatesDependencies;
 use Brendt\Make\Tests\Post;
