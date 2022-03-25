@@ -22,9 +22,7 @@ final class FactoryTest extends TestCase
         $this->assertEquals('test', $post->title);
     }
 
-    /** @test
-     * @group json
-     */
+    /** @test */
     public function from_json()
     {
         $post = make(Post::class)->from(<<<JSON
