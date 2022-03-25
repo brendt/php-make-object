@@ -6,5 +6,5 @@ namespace Brendt\Make\Processors;
 
 interface ProcessorAwareInterface
 {
-    public function setProcessor(Processor $processor);
+    public function setProcessor(Processor $processor): void;
 }

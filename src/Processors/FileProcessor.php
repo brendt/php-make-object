@@ -8,7 +8,7 @@ final class FileProcessor implements ProcessorInterface, ProcessorAwareInterface
 {
     private Processor $processor;
 
-    public function setProcessor(Processor $processor)
+    public function setProcessor(Processor $processor): void
     {
         $this->processor = $processor;
     }
