@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brendt\Make\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-class FactoryTest extends TestCase
+final class FactoryTest extends TestCase
 {
     /** @test */
     public function from_array()

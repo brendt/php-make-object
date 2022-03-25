@@ -1,18 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brendt\Make;
 
-use Closure;
-
-class Mapper
+interface Mapper
 {
-    /**
-     * @param \Closure(\Brendt\Make\Makes|array|string $input): bool $match
-     * @param \Closure(mixed $input): object $result
-     */
-    public function __construct(
-        public readonly Closure $match,
-        public readonly Closure $result,
-    ) {
-    }
+    public function matches(Makes|array|string $input): bool;
+
+    public function map(Makes|array|string $input): object;
 }

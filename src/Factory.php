@@ -1,8 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brendt\Make;
 
-use Closure;
+use Brendt\Make\Mappers\ArrayMapper;
+use Brendt\Make\Mappers\FileMapper;
+use Brendt\Make\Mappers\JsonMapper;
+use Brendt\Make\Mappers\MakesMapper;
+use Brendt\Make\Mappers\XmlMapper;
 use Exception;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
@@ -36,26 +42,11 @@ final class Factory
         );
 
         $this
-            ->addMapper(new Mapper(
-                match: fn (Makes|array|string $input) => $input instanceof Makes,
-                result: fn (Makes $input) => $this->from($input->data()),
-            ))
-            ->addMapper(new Mapper(
-                match: fn (Makes|array|string $input) => is_array($input),
-                result: fn (array $input) => $this->serializer->denormalize($input, $this->className),
-            ))
-            ->addMapper(new Mapper(
-                match: fn (Makes|array|string $input) => is_file($input),
-                result: fn (string $input) => $this->from(file_get_contents($input)),
-            ))
-            ->addMapper(new Mapper(
-                match: fn (Makes|array|string $input) => str_starts_with(trim($input), '<') && str_ends_with(trim($input), '>'),
-                result: fn (string $input) => $this->serializer->deserialize($input, $this->className, 'xml'),
-            ))
-            ->addMapper(new Mapper(
-                match: fn (Makes|array|string $input) => str_starts_with(trim($input), '{') && str_ends_with(trim($input), '}'),
-                result: fn (string $input) => $this->serializer->deserialize($input, $this->className, 'json'),
-            ));
+            ->addMapper(new MakesMapper($this))
+            ->addMapper(new FileMapper($this))
+            ->addMapper(new ArrayMapper($this->serializer, $this->className))
+            ->addMapper(new JsonMapper($this->serializer, $this->className))
+            ->addMapper(new XmlMapper($this->serializer, $this->className));
     }
 
     /**
@@ -75,7 +66,7 @@ final class Factory
     {
         $mapper = $this->resolveMapper($input);
 
-        return $mapper($input);
+        return $mapper->map($input);
     }
 
     public function addMapper(Mapper $mapper): self
@@ -85,11 +76,11 @@ final class Factory
         return $this;
     }
 
-    private function resolveMapper(Makes|array|string $input): Closure
+    private function resolveMapper(Makes|array|string $input): Mapper
     {
         foreach ($this->mappers as $mapper) {
-            if (($mapper->match)($input)) {
-                return $mapper->result;
+            if ($mapper->matches($input)) {
+                return $mapper;
             }
         }
 
