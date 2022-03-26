@@ -24,7 +24,7 @@ Please see [CONTRIBUTING](https://github.com/spatie/.github/blob/main/CONTRIBUTI
 
 ## Credits
 
-- [Brent Roose](https://github.com/brendt_gd)
+- [Brent Roose](https://github.com/brendt)
 
 ## License
 
