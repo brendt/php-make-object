@@ -8,7 +8,6 @@
 
 You can install the package via composer:
 
-
 ```bash
 composer require brendt/php-make-object
 ```
