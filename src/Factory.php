@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Brendt\Make;
 
-use Brendt\Make\Mappers\ArrayMapper;
-use Brendt\Make\Mappers\FileMapper;
-use Brendt\Make\Mappers\JsonMapper;
-use Brendt\Make\Mappers\MakesMapper;
-use Brendt\Make\Mappers\XmlMapper;
-use Exception;
+use Brendt\Make\Processors\ArrayProcessor;
+use Brendt\Make\Processors\FileProcessor;
+use Brendt\Make\Processors\JsonProcessor;
+use Brendt\Make\Processors\MakesProcessor;
+use Brendt\Make\Processors\Processor;
+use Brendt\Make\Processors\ProcessorInterface;
+use Brendt\Make\Processors\XmlProcessor;
 use Symfony\Component\Serializer\Serializer as SymfonySerializer;
 
 /**
@@ -17,62 +18,53 @@ use Symfony\Component\Serializer\Serializer as SymfonySerializer;
  */
 final class Factory
 {
-    private readonly SymfonySerializer $serializer;
+    /** @var array<array-key,ProcessorInterface> */
+    private static array $processors = [];
 
-    private readonly string $className;
+    public function __construct(
+        private readonly ProcessorInterface $processor,
+        private readonly SymfonySerializer $serializer
+    ) {
+        //
+    }
 
-    /** @var \Brendt\Make\Mapper[] */
-    private array $mappers = [];
-
-    public function __construct(string $className)
+    public static function registerProcessor(ProcessorInterface $processor)
     {
-        $this->className = $className;
-
-        $this->serializer = Serializer::make();
-
-        $this
-            ->addMapper(new MakesMapper($this))
-            ->addMapper(new FileMapper($this))
-            ->addMapper(new ArrayMapper($this->serializer, $this->className))
-            ->addMapper(new JsonMapper($this->serializer, $this->className))
-            ->addMapper(new XmlMapper($this->serializer, $this->className));
+        self::$processors[] = $processor;
     }
 
     /**
      * @param class-string<ClassType> $className
      *
-     * @return self<ClassType>
+     * @return PendingObject<ClassType>
      */
-    public static function make(string $className): self
+    public static function make(string $className): PendingObject
     {
-        return new self($className);
+        $defaultProcessors = new Processor(
+            array_merge(self::$processors, [
+                new ArrayProcessor(),
+                new FileProcessor(),
+                new JsonProcessor(),
+                new MakesProcessor(),
+                new XmlProcessor(),
+            ])
+        );
+
+        $factory = new self($defaultProcessors, Serializer::make());
+
+        return $factory->build($className);
     }
 
     /**
-     * @return ClassType
+     * @param class-string<ClassType> $className
+     * @return PendingObject<ClassType>
      */
-    public function from(Makes|array|string $input): object
+    public function build(string $className): PendingObject
     {
-        $mapper = $this->resolveMapper($input);
-
-        return $mapper->map($input);
-    }
-
-    public function addMapper(Mapper $mapper): self
-    {
-        $this->mappers[] = $mapper;
-
-        return $this;
-    }
-
-    private function resolveMapper(Makes|array|string $input): Mapper
-    {
-        foreach ($this->mappers as $mapper) {
-            if ($mapper->matches($input)) {
-                return $mapper;
-            }
-        }
-
-        throw new Exception("No mapper found for {$input}");
+        return new PendingObject(
+            processor: $this->processor,
+            serializer: $this->serializer,
+            class: $className
+        );
     }
 }

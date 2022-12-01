@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Brendt\Make\Tests;
+namespace Brendt\Make\Tests\Support\Data;
 
 final class Post
 {
-    /** @var \Brendt\Make\Tests\Tag[] */
+    /** @var \Brendt\Make\Tests\Support\Data\Tag[] */
     public array $tags;
 
     public function __construct(

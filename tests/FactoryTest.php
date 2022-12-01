@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Brendt\Make\Tests;
 
+use Brendt\Make\Factory;
+use Brendt\Make\Processors\ProcessorInterface;
+use Brendt\Make\Tests\Support\Data\Post;
+use Brendt\Make\Tests\Support\Makes\PostRequest;
 use PHPUnit\Framework\TestCase;
 
 final class FactoryTest extends TestCase
@@ -56,7 +60,7 @@ final class FactoryTest extends TestCase
     /** @test */
     public function from_file()
     {
-        $post = make(Post::class)->from(__DIR__ . '/post.json');
+        $post = make(Post::class)->from(__DIR__ . '/Support/files/post.json');
 
         $this->assertEquals('test', $post->title);
     }
@@ -95,5 +99,18 @@ final class FactoryTest extends TestCase
 
         $this->assertEquals('a', $post->tags[0]->name);
         $this->assertEquals('b', $post->tags[1]->name);
+    }
+
+    /** @test */
+    public function registers_processor()
+    {
+        $array = ['title' => 'testing'];
+
+        $processor = $this->getMockBuilder(ProcessorInterface::class)->getMock();
+        $processor->expects($this->once())->method('supports')->with($array)->willReturn(false);
+
+        Factory::registerProcessor($processor);
+
+        make(Post::class)->from($array);
     }
 }
