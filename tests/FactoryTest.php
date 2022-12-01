@@ -8,6 +8,19 @@ use PHPUnit\Framework\TestCase;
 
 final class FactoryTest extends TestCase
 {
+
+    /** @test */
+    public function from_collection_with_arrays()
+    {
+        $posts = make(Post::class)->fromCollection([
+            ['title' => 'a'],
+            ['title' => 'b'],
+        ]);
+
+        $this->assertEquals('a', $posts[0]->title);
+        $this->assertEquals('b', $posts[1]->title);
+    }
+
     /** @test */
     public function from_array()
     {

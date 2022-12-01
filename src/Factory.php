@@ -10,6 +10,7 @@ use Brendt\Make\Mappers\JsonMapper;
 use Brendt\Make\Mappers\MakesMapper;
 use Brendt\Make\Mappers\XmlMapper;
 use Exception;
+use Illuminate\Support\Collection;
 use Symfony\Component\Serializer\Serializer as SymfonySerializer;
 
 /**
@@ -56,6 +57,15 @@ final class Factory
         $mapper = $this->resolveMapper($input);
 
         return $mapper->map($input);
+    }
+
+    /**
+     * @param array $input
+     * @return \Illuminate\Support\Collection<int, ClassType>
+     */
+    public function fromCollection(array $input): Collection
+    {
+        return collect($input)->map(fn (mixed $input) => $this->from($input));
     }
 
     public function addMapper(Mapper $mapper): self
