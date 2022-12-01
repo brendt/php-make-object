@@ -19,6 +19,17 @@ final class FactoryTest extends TestCase
     }
 
     /** @test */
+    public function with_additional_data()
+    {
+        $post = make(Post::class)->from([
+            'title' => 'test',
+            'unknown' => 'unknown',
+        ]);
+
+        $this->assertFalse(isset($post->unknown));
+    }
+
+    /** @test */
     public function from_json()
     {
         $post = make(Post::class)->from(<<<JSON
