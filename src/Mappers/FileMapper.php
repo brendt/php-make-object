@@ -10,11 +10,12 @@ final class FileMapper
 {
     public function __construct(
         private readonly Factory $factory,
-    ) {}
+    ) {
+    }
 
     public function __invoke(string $input): object
     {
-        if (!is_file($input)) {
+        if (! is_file($input)) {
             throw new CannotMap("Input isn't a file");
         }
 

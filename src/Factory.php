@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Brendt\Make;
 
 use Brendt\Make\Mappers\ArrayMapper;
-use Brendt\Make\Mappers\FileMapper;
 use Brendt\Make\Mappers\CannotMap;
+use Brendt\Make\Mappers\FileMapper;
 use Brendt\Make\Mappers\JsonMapper;
 use Brendt\Make\Mappers\MakesMapper;
 use Brendt\Make\Mappers\ObjectMapper;
@@ -75,7 +75,7 @@ final class Factory
      */
     public function fromCollection(array $input): Collection
     {
-        return collect($input)->map(fn(mixed $input) => $this->from($input));
+        return collect($input)->map(fn (mixed $input) => $this->from($input));
     }
 
     public function addMapper(callable $mapper): self
