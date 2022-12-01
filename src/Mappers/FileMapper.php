@@ -8,20 +8,18 @@ use Brendt\Make\Factory;
 use Brendt\Make\Makes;
 use Brendt\Make\Mapper;
 
-final class FileMapper implements Mapper
+final class FileMapper
 {
     public function __construct(
-        private readonly Factory $factory
-    ) {
-    }
+        private readonly Factory $factory,
+    ) {}
 
-    public function matches(object|array|string $input): bool
+    public function __invoke(string $input): object
     {
-        return is_string($input) && is_file($input);
-    }
+        if (!is_file($input)) {
+            throw new InvalidMapper("Input isn't a file");
+        }
 
-    public function map(object|array|string $input): object
-    {
         return $this->factory->from(file_get_contents($input));
     }
 }

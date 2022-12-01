@@ -8,7 +8,7 @@ use Brendt\Make\Makes;
 use Brendt\Make\Mapper;
 use Symfony\Component\Serializer\Serializer;
 
-final class JsonMapper implements Mapper
+final class JsonMapper
 {
     public function __construct(
         private readonly Serializer $serializer,
@@ -16,13 +16,14 @@ final class JsonMapper implements Mapper
     ) {
     }
 
-    public function matches(object|array|string $input): bool
+    public function __invoke(string $input): object
     {
-        return is_string($input) && str_starts_with(trim($input), '{') && str_ends_with(trim($input), '}');
-    }
+        json_decode($input);
 
-    public function map(object|array|string $input): object
-    {
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new InvalidMapper('Not a valid JSON string');
+        }
+
         return $this->serializer->deserialize($input, $this->className, 'json');
     }
 }

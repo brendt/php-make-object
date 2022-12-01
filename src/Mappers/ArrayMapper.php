@@ -8,7 +8,7 @@ use Brendt\Make\Makes;
 use Brendt\Make\Mapper;
 use Symfony\Component\Serializer\Serializer;
 
-final class ArrayMapper implements Mapper
+final class ArrayMapper
 {
     public function __construct(
         private readonly Serializer $serializer,
@@ -16,12 +16,7 @@ final class ArrayMapper implements Mapper
     ) {
     }
 
-    public function matches(object|array|string $input): bool
-    {
-        return is_array($input);
-    }
-
-    public function map(object|array|string $input): object
+    public function __invoke(array $input): object
     {
         return $this->serializer->denormalize($input, $this->className);
     }

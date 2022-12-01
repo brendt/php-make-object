@@ -6,6 +6,7 @@ namespace Brendt\Make;
 
 use Brendt\Make\Mappers\ArrayMapper;
 use Brendt\Make\Mappers\FileMapper;
+use Brendt\Make\Mappers\InvalidMapper;
 use Brendt\Make\Mappers\JsonMapper;
 use Brendt\Make\Mappers\MakesMapper;
 use Brendt\Make\Mappers\ObjectMapper;
@@ -13,6 +14,7 @@ use Brendt\Make\Mappers\XmlMapper;
 use Exception;
 use Illuminate\Support\Collection;
 use Symfony\Component\Serializer\Serializer as SymfonySerializer;
+use TypeError;
 
 /**
  * @template ClassType
@@ -23,7 +25,7 @@ final class Factory
 
     private readonly string $className;
 
-    /** @var \Brendt\Make\Mapper[] */
+    /** @var callable[] */
     private array $mappers = [];
 
     public function __construct(string $className)
@@ -38,8 +40,7 @@ final class Factory
             ->addMapper(new ArrayMapper($this->serializer, $this->className))
             ->addMapper(new JsonMapper($this->serializer, $this->className))
             ->addMapper(new XmlMapper($this->serializer, $this->className))
-            ->addMapper(new ObjectMapper($this))
-        ;
+            ->addMapper(new ObjectMapper($this));
     }
 
     /**
@@ -55,11 +56,17 @@ final class Factory
     /**
      * @return ClassType
      */
-    public function from(array|object|string $input): object
+    public function from(mixed $input): object
     {
-        $mapper = $this->resolveMapper($input);
+        foreach ($this->mappers as $mapper) {
+            try {
+                return $mapper($input);
+            } catch (TypeError|InvalidMapper) {
+                continue;
+            }
+        }
 
-        return $mapper->map($input);
+        throw new Exception("No mapper found for {$input}");
     }
 
     /**
@@ -68,24 +75,13 @@ final class Factory
      */
     public function fromCollection(array $input): Collection
     {
-        return collect($input)->map(fn (mixed $input) => $this->from($input));
+        return collect($input)->map(fn(mixed $input) => $this->from($input));
     }
 
-    public function addMapper(Mapper $mapper): self
+    public function addMapper(callable $mapper): self
     {
         $this->mappers[] = $mapper;
 
         return $this;
-    }
-
-    private function resolveMapper(object|array|string $input): Mapper
-    {
-        foreach ($this->mappers as $mapper) {
-            if ($mapper->matches($input)) {
-                return $mapper;
-            }
-        }
-
-        throw new Exception("No mapper found for {$input}");
     }
 }
