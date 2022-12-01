@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Brendt\Make\Factory;
 
 if (! function_exists('make')) {
-
     /**
      * @template ClassName
      * @param class-string<ClassName> $className
