@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Brendt\Make\Mappers;
 
-use Brendt\Make\Makes;
-use Brendt\Make\Mapper;
 use Symfony\Component\Serializer\Serializer;
 
 final class XmlMapper

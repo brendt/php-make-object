@@ -6,7 +6,6 @@ namespace Brendt\Make\Mappers;
 
 use Brendt\Make\Factory;
 use Brendt\Make\Makes;
-use Brendt\Make\Mapper;
 
 final class MakesMapper
 {
