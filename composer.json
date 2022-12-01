@@ -1,6 +1,6 @@
 {
     "name": "brendt/php-make-object",
-    "description": "Easily make objects from raw data",
+    "description": "Simple wrapper for symfony/serializer for the 90% use-case",
     "keywords": [
         "brendt",
         "php-make-object"
