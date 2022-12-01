@@ -122,7 +122,7 @@ final class PostRequest implements Makes
 #### Collections
 
 ```php
-$posts = collectionOf(Post::class)->from([
+$posts = make(Post::class)->fromCollection([
     ['title' => 'a'],
     ['title' => 'b'],
     ['title' => 'c'],
