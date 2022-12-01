@@ -75,7 +75,7 @@ final class Factory
      */
     public function fromCollection(array $input): Collection
     {
-        return collect($input)->map(fn(mixed $input) => $this->from($input));
+        return collect($input)->map(fn (mixed $input) => $this->from($input));
     }
 
     public function addMapper(callable $mapper): self
