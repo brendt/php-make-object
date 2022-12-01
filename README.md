@@ -119,6 +119,16 @@ final class PostRequest implements Makes
 }
 ```
 
+#### Collections
+
+```php
+$posts = collectionOf(Post::class)->from([
+    ['title' => 'a'],
+    ['title' => 'b'],
+    ['title' => 'c'],
+]);
+```
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
