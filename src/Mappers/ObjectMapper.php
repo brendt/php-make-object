@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Brendt\Make\Mappers;
 
 use Brendt\Make\Factory;
-use Brendt\Make\Makes;
 use Brendt\Make\Mapper;
 
 final class ObjectMapper implements Mapper
