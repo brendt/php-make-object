@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 final class FactoryTest extends TestCase
 {
-
     /** @test */
     public function from_collection_with_arrays()
     {
