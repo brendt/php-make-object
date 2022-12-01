@@ -19,7 +19,7 @@ final class JsonMapper
         json_decode($input);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidMapper('Not a valid JSON string');
+            throw new CannotMap('Not a valid JSON string');
         }
 
         return $this->serializer->deserialize($input, $this->className, 'json');

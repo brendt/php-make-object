@@ -6,7 +6,7 @@ namespace Brendt\Make;
 
 use Brendt\Make\Mappers\ArrayMapper;
 use Brendt\Make\Mappers\FileMapper;
-use Brendt\Make\Mappers\InvalidMapper;
+use Brendt\Make\Mappers\CannotMap;
 use Brendt\Make\Mappers\JsonMapper;
 use Brendt\Make\Mappers\MakesMapper;
 use Brendt\Make\Mappers\ObjectMapper;
@@ -61,7 +61,7 @@ final class Factory
         foreach ($this->mappers as $mapper) {
             try {
                 return $mapper($input);
-            } catch (TypeError|InvalidMapper) {
+            } catch (TypeError|CannotMap) {
                 continue;
             }
         }

@@ -4,7 +4,7 @@ namespace Brendt\Make\Mappers;
 
 use Exception;
 
-final class InvalidMapper extends Exception
+final class CannotMap extends Exception
 {
     public function __construct(string $message)
     {

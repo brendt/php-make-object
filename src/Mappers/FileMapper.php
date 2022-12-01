@@ -15,7 +15,7 @@ final class FileMapper
     public function __invoke(string $input): object
     {
         if (!is_file($input)) {
-            throw new InvalidMapper("Input isn't a file");
+            throw new CannotMap("Input isn't a file");
         }
 
         return $this->factory->from(file_get_contents($input));

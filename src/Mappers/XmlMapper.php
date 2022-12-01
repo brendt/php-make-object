@@ -20,7 +20,7 @@ final class XmlMapper
             ! str_starts_with(trim($input), '<')
             || ! str_ends_with(trim($input), '>')
         ) {
-            throw new InvalidMapper("Not a valid XML string");
+            throw new CannotMap("Not a valid XML string");
         }
 
         return $this->serializer->deserialize($input, $this->className, 'xml');
