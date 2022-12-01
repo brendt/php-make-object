@@ -8,6 +8,7 @@ use Brendt\Make\Mappers\ArrayMapper;
 use Brendt\Make\Mappers\FileMapper;
 use Brendt\Make\Mappers\JsonMapper;
 use Brendt\Make\Mappers\MakesMapper;
+use Brendt\Make\Mappers\ObjectMapper;
 use Brendt\Make\Mappers\XmlMapper;
 use Exception;
 use Illuminate\Support\Collection;
@@ -36,7 +37,9 @@ final class Factory
             ->addMapper(new FileMapper($this))
             ->addMapper(new ArrayMapper($this->serializer, $this->className))
             ->addMapper(new JsonMapper($this->serializer, $this->className))
-            ->addMapper(new XmlMapper($this->serializer, $this->className));
+            ->addMapper(new XmlMapper($this->serializer, $this->className))
+            ->addMapper(new ObjectMapper($this))
+        ;
     }
 
     /**
@@ -52,7 +55,7 @@ final class Factory
     /**
      * @return ClassType
      */
-    public function from(Makes|array|string $input): object
+    public function from(array|object|string $input): object
     {
         $mapper = $this->resolveMapper($input);
 
@@ -75,7 +78,7 @@ final class Factory
         return $this;
     }
 
-    private function resolveMapper(Makes|array|string $input): Mapper
+    private function resolveMapper(object|array|string $input): Mapper
     {
         foreach ($this->mappers as $mapper) {
             if ($mapper->matches($input)) {

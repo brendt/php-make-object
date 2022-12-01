@@ -16,12 +16,12 @@ final class XmlMapper implements Mapper
     ) {
     }
 
-    public function matches(array|string|Makes $input): bool
+    public function matches(object|array|string $input): bool
     {
         return is_string($input) && str_starts_with(trim($input), '<') && str_ends_with(trim($input), '>');
     }
 
-    public function map(array|string|Makes $input): object
+    public function map(object|array|string $input): object
     {
         return $this->serializer->deserialize($input, $this->className, 'xml');
     }

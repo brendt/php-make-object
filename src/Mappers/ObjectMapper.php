@@ -8,7 +8,7 @@ use Brendt\Make\Factory;
 use Brendt\Make\Makes;
 use Brendt\Make\Mapper;
 
-final class MakesMapper implements Mapper
+final class ObjectMapper implements Mapper
 {
     public function __construct(
         private readonly Factory $factory
@@ -17,11 +17,11 @@ final class MakesMapper implements Mapper
 
     public function matches(object|array|string $input): bool
     {
-        return $input instanceof Makes;
+        return is_object($input);
     }
 
     public function map(object|array|string $input): object
     {
-        return $this->factory->from($input->data());
+        return $this->factory->from((array) $input);
     }
 }

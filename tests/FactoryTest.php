@@ -31,6 +31,16 @@ final class FactoryTest extends TestCase
     }
 
     /** @test */
+    public function from_object()
+    {
+        $post = make(Post::class)->from((object) [
+            'title' => 'test',
+        ]);
+
+        $this->assertEquals('test', $post->title);
+    }
+
+    /** @test */
     public function with_additional_data()
     {
         $post = make(Post::class)->from([

@@ -15,12 +15,12 @@ final class FileMapper implements Mapper
     ) {
     }
 
-    public function matches(array|string|Makes $input): bool
+    public function matches(object|array|string $input): bool
     {
         return is_string($input) && is_file($input);
     }
 
-    public function map(array|string|Makes $input): object
+    public function map(object|array|string $input): object
     {
         return $this->factory->from(file_get_contents($input));
     }

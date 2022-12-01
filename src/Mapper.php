@@ -6,7 +6,7 @@ namespace Brendt\Make;
 
 interface Mapper
 {
-    public function matches(Makes|array|string $input): bool;
+    public function matches(object|array|string $input): bool;
 
-    public function map(Makes|array|string $input): object;
+    public function map(object|array|string $input): object;
 }
